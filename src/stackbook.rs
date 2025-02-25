@@ -7,7 +7,7 @@ struct Order {
     id: u32,
 }
 
-struct OrderBook {
+struct StackBook {
     bids: [Option<Order>; MAX_ORDERS],
     asks: [Option<Order>; MAX_ORDERS],
     bid_count: usize,
@@ -15,10 +15,10 @@ struct OrderBook {
     next_id: u32,
 }
 
-impl OrderBook {
+impl StackBook {
     #[inline]
     fn new() -> Self {
-        OrderBook {
+        StackBook {
             bids: [None; MAX_ORDERS],
             asks: [None; MAX_ORDERS],
             bid_count: 0,
@@ -128,7 +128,7 @@ mod tests {
 
     #[test]
     fn test_empty_book() {
-        let book = OrderBook::new();
+        let book = StackBook::new();
         assert!(book.best_bid().is_none());
         assert!(book.best_ask().is_none());
         assert_eq!(book.bid_count, 0);
@@ -137,7 +137,7 @@ mod tests {
 
     #[test]
     fn test_place_and_best_px() {
-        let mut book = OrderBook::new();
+        let mut book = StackBook::new();
 
         let bid1 = book.place(10000, 50, true, 1).unwrap();
         let bid2 = book.place(9950, 100, true, 2).unwrap();
@@ -157,7 +157,7 @@ mod tests {
 
     #[test]
     fn test_sorting_px_sz_ts() {
-        let mut book = OrderBook::new();
+        let mut book = StackBook::new();
 
         book.place(10000, 50, true, 1).unwrap();
         book.place(9950, 75, true, 1).unwrap();
@@ -169,7 +169,7 @@ mod tests {
         assert_eq!(book.bids[1].unwrap().sz, 50);
         assert_eq!(book.bids[2].unwrap().px, 9950);
 
-        let mut book = OrderBook::new();
+        let mut book = StackBook::new();
         book.place(10000, 50, true, 3).unwrap();
         book.place(10000, 50, true, 1).unwrap();
         book.place(10000, 50, true, 2).unwrap();
@@ -180,7 +180,7 @@ mod tests {
 
     #[test]
     fn test_cancel() {
-        let mut book = OrderBook::new();
+        let mut book = StackBook::new();
         let bid1 = book.place(10000, 50, true, 1).unwrap();
         let bid2 = book.place(9950, 100, true, 2).unwrap();
         assert_eq!(book.bid_count, 2);
@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn test_capacity_limit() {
-        let mut book = OrderBook::new();
+        let mut book = StackBook::new();
         for i in 0..(MAX_ORDERS - 1) {
             assert!(book.place(10000 + i as u64, 50, true, 1).is_some());
         }
@@ -206,7 +206,7 @@ mod tests {
 
     #[test]
     fn test_id_uniqueness() {
-        let mut book = OrderBook::new();
+        let mut book = StackBook::new();
         let id1 = book.place(10000, 50, true, 1).unwrap();
         let id2 = book.place(9950, 100, true, 2).unwrap();
         let id3 = book.place(10100, 75, false, 3).unwrap();
