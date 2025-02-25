@@ -123,7 +123,7 @@ impl OrderBook {
 
 #[cfg(test)]
 mod tests {
-    use crate::OrderBook;
+    use crate::treebook::OrderBook;
 
     #[test]
     fn test0() {
