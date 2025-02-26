@@ -129,7 +129,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_bench0() {
+    fn test_bench_p() {
         let k = 1e4 as usize;
         let n = 1e3 as usize;
         let mut pps_sum = 0.0;
@@ -138,6 +138,28 @@ mod tests {
             let t0 = Instant::now();
             for _ in 0..n {
                 black_box(book.place(12, 1, true, 32489324));
+            }
+            let took_s = t0.elapsed().as_micros() as f64 / 1e6;
+            let pps = n as f64 / took_s;
+            pps_sum += pps;
+        }
+        println!(
+            "iterations={k}, sample={n}, avg Place / S: {:.2}",
+            pps_sum / k as f64
+        );
+    }
+
+    #[test]
+    fn test_bench_pc() {
+        let k = 1e4 as usize;
+        let n = 1e3 as usize;
+        let mut pps_sum = 0.0;
+        for _ in 0..k {
+            let mut book = OrderBook::new();
+            let t0 = Instant::now();
+            for _ in 0..n {
+                black_box(book.place(12, 1, true, 32489324));
+                black_box(book.cancel(12, true));
             }
             let took_s = t0.elapsed().as_micros() as f64 / 1e6;
             let pps = n as f64 / took_s;

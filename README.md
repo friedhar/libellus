@@ -16,3 +16,8 @@ Memory:	16 GB
 ```
 iterations=10000, sample=1000, mean(place/s): 3_309_155.66
 ```
+
+### Place-Cancel
+```
+iterations=10000, sample=1000, avg Place-Cancel / S: 1_767_793.11
+```
